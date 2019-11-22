@@ -28,7 +28,7 @@
                         <th class="text-center" width="100">操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="cateContainer">
                     <tr>
                         <td>未分类</td>
                         <td>uncategorized</td>
@@ -130,7 +130,38 @@
               }
           })      
       </script>
-
+<script src="./js/jquery-1.12.4.min.js"></script>
+<script src="./js/utile/user.js"></script>
+<script src="./js/utile/config.js"></script>
+<script src="./js/template-web.js"></script>
+<script src="./js/utile/category.js"></script>
+<script type="text/html" id="temp">
+    {{each data item}}
+    <tr>
+            <td>{{item.name}}</td>
+            <td>{{item.slug}}</td>
+            <td class="text-center">
+                <a href="javascript:editTr({&quot;id&quot;:&quot;4&quot;,&quot;slug&quot;:&quot;travel&quot;,&quot;name&quot;:&quot;爱旅行&quot;});"
+                    class="btn btn-info btn-xs">编辑</a>
+                <a href="javascript:deleteTr( 4 );" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+</script>
+<script>
+category.show(function(res){
+    // res就是从服务器中获取的数据
+    // 把数据拼接成字符串，显示在tbody中
+    // console.log(res) 
+    if(res.code === 200){
+        var htmlStr = template('temp',res)
+    console.log(htmlStr);
+    //显示在DOM容器中
+    $('#cateContainer').html(htmlStr)
+    }
+    
+})
+</script>
 </body>
 
 </html>
