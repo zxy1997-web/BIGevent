@@ -61,21 +61,16 @@ $('#btnLogin').click(function(){
              $('#myModal').modal('show')
         return;
     }
-    user.login(myName,myPassword);
-//     $.post('http://localhost:8000/admin/login',
-// {
-//     user_name : myName,
-//     password : myPassword,
-// },function(res){
-//     if(res.code === 200){
-//         location.href = './index.html';
-//     }
-//     else {
-//              // alert(res.msg)
-//              $('#msgInfo').text(res.msg)
-//              $('#myModal').modal('show')
-//          }
-// })
+    user.login(myName,myPassword,function(res){
+        if(res.code === 200){
+                location.href = './index.html'
+            }
+            else{
+                $('#msgInfo').text(res.msg)
+                $('#myModal').modal('show')
+            }
+    });
+
 })
 
 </script>

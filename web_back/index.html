@@ -58,10 +58,21 @@
 <script src="./js/utile/user.js"></script>
 <script>
     //获取并显示用户信息
-    user.getInfo();
+    user.getInfo(function(res){
+        //期望是：user.getInfo只负责去发请求，取数据（不负责加工数据）。
+        //取数据回来传给result这个参数
+        if(res.code === 200){
+                $('#userImg').prop('src',res.data.user_pic)
+                $('#userName').text(res.data.nickname)
+            }
+    });
     //退出功能
 $('#btnLogout').click(function(){
-    user.logout();
+    user.logout(function(res){
+        if(res.code === 200){
+            window.location.href = "./login.html"
+        }
+    });
 })
 </script>
     <script>

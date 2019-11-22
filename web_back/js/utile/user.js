@@ -1,34 +1,22 @@
 var user = {
-    login:function(myName,myPassword){
+    login:function(myName,myPassword,callback){
         $.post(APIURLS.user_login,
         {
             user_name :myName,
             password:myPassword,
         },
         function(res){
-            if(res.code === 200){
-                location.href = './index.html'
-            }
-            else{
-                $('#msgInfo').text(res.msg)
-                $('#myModal').modal('show')
-            }
+            callback(res)
         })
     },
-    logout:function(){
+    logout:function(callback){
         $.post(APIURLS.user_logout,function(res){
-            if(res.code === 200){
-                location.href = './login.html'
-            }
-            
+            callback(res)  
         })
     },
-    getInfo:function(){
+    getInfo:function(callback){
         $.get(APIURLS.user_getInfo,function(res){
-            if(res.code === 200){
-                $('#userImg').prop('src',res.data.user_pic)
-                $('#userName').text(res.data.nickname)
-            }
+            callback(res)
             
         })
     }
