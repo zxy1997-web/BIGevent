@@ -76,6 +76,8 @@
           });
 
           $('#model_shutoff').click(function(){
+            $('#cate-name').val('');
+                $('#cate-slug').val('');
             $('#addModal').modal('hide');
           });
 
@@ -93,6 +95,7 @@
 <script src="./js/utile/config.js"></script>
 <script src="./js/template-web.js"></script>
 <script src="./js/utile/category.js"></script>
+<script src="./js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/html" id="temp">
     {{each data item}}
     <tr>
@@ -170,10 +173,10 @@ getandShow();
                 // 1、重新请求
                 getandShow();
                 // 2、清空input框
-                $('#cate-name').val('')
-                $('#cate-slug').val('')
+                $('#cate-name').val('');
+                $('#cate-slug').val('');
                 // 3、模态框隐藏
-                $('#addModal').modal('hide')
+                $('#addModal').modal('hide');
             }
             else{
                 alert(res.msg);
