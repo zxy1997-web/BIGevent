@@ -29,45 +29,7 @@
                     </tr>
                 </thead>
                 <tbody id="cateContainer">
-                    <tr>
-                        <td>未分类</td>
-                        <td>uncategorized</td>
-                        <td class="text-center">
-                            <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});"
-                                class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 1 );" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>奇趣事</td>
-                        <td>funny</td>
-                        <td class="text-center">
-                            <a href="javascript:editTr({&quot;id&quot;:&quot;2&quot;,&quot;slug&quot;:&quot;funny&quot;,&quot;name&quot;:&quot;奇趣事&quot;});"
-                                class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 2 );" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>会生活</td>
-                        <td>living</td>
-                        <td class="text-center">
-                            <a href="javascript:editTr({&quot;id&quot;:&quot;3&quot;,&quot;slug&quot;:&quot;living&quot;,&quot;name&quot;:&quot;会生活&quot;});"
-                                class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 3 );" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>爱旅行</td>
-                        <td>travel</td>
-                        <td class="text-center">
-                            <a href="javascript:editTr({&quot;id&quot;:&quot;4&quot;,&quot;slug&quot;:&quot;travel&quot;,&quot;name&quot;:&quot;爱旅行&quot;});"
-                                class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 4 );" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr>
+                    
                 </tbody>
                 <tfoot>
                     <tr>
@@ -91,11 +53,11 @@
               <form>
                 <div class="form-group">
                   <label for="recipient-name" class="control-label">分类名称:</label>
-                  <input type="text" class="form-control" id="recipient-name">
+                  <input type="text" class="form-control" id="cate-name">
                 </div>
                 <div class="form-group">
                   <label for="message-text" class="control-label">分类别名:</label>
-                  <input type="text" class="form-control" id="recipient-name">
+                  <input type="text" class="form-control" id="cate-slug">
                 </div>
               </form>
             </div>
@@ -114,14 +76,10 @@
           });
 
           $('#model_shutoff').click(function(){
-            alert('shutoff');
             $('#addModal').modal('hide');
           });
 
-          $('#model_add').click(function(){
-            alert('add');
-            $('#addModal').modal('hide');
-          });
+         
 
           $('.category_table').delegate('a','click',function(){
               if($(this).hasClass('btn-info')){
@@ -143,13 +101,16 @@
             <td class="text-center">
                 <a href="javascript:editTr({&quot;id&quot;:&quot;4&quot;,&quot;slug&quot;:&quot;travel&quot;,&quot;name&quot;:&quot;爱旅行&quot;});"
                     class="btn btn-info btn-xs">编辑</a>
-                <a href="javascript:deleteTr( 4 );" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:;" data-id="{{item.id}}" class="btn btn-danger btn-xs del">删除</a>
             </td>
         </tr>
         {{/each}}
 </script>
 <script>
-category.show(function(res){
+
+    // 加载显示类别
+    function getandShow(){
+        category.show(function(res){
     // res就是从服务器中获取的数据
     // 把数据拼接成字符串，显示在tbody中
     console.log(res) 
@@ -161,6 +122,64 @@ category.show(function(res){
     }
     
 })
+    }
+getandShow();
+    //   删除
+    // $（容器）.on（事件名，委托人，回调）
+    
+    $('#cateContainer').on('click','.del',function(){
+        if(window.confirm('确定要删除吗？') === false){
+
+            return;
+        }
+        // console.log(this)
+        // 获取自定义属性
+        var id =$(this).attr('data-id')
+        console.log(id);
+        category.del(id,function(res){
+            console.log(res) 
+            if(res.code === 200){
+                // 删除成功
+                // 1、直接在页面上删除dom（有可能导致数据不同步）（不适用）
+                // 2、重新获取数据
+                getandShow();
+            }
+            else{
+                alert(res.msg);
+            }
+        })
+    })
+    // 添加信息
+    $('#model_add').click(function(){
+            // alert('add');
+            //
+            // 获取用户填入信息
+            var name = $('#cate-name').val().trim();
+            var slug = $('#cate-slug').val().trim();
+            // 简单判断是否为空
+            if(name === ''||slug === ''){
+                alert('不能为空');
+                return;
+            }
+            console.log(name,slug);
+            // 发请求
+            category.add(name,slug,function(res){
+                // console.log(res)
+            if(res.code === 200){
+                // 添加成功
+                // 1、重新请求
+                getandShow();
+                // 2、清空input框
+                $('#cate-name').val('')
+                $('#cate-slug').val('')
+                // 3、模态框隐藏
+                $('#addModal').modal('hide')
+            }
+            else{
+                alert(res.msg);
+            }
+            })
+          });
 </script>
 </body>
 
