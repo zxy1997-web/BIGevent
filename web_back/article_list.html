@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
-    <script src="js/jquery-1.12.4.min.js"></script>
-    <script src="js/bootstrap/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
@@ -78,33 +77,26 @@
             </table>
 
             <div class="row text-center">
-            <ul class="pagination pagination-sm">
-                <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-                <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-                <li class="page-item active"><a href="#" class="page-link">1</a></li>
-                <li class="page-item"><a href="#" class="page-link">2</a></li>
-                <li class="page-item"><a href="#" class="page-link">3</a></li>
-                <li class="page-item"><a href="#" class="page-link">4</a></li>
-                <li class="page-item"><a href="#" class="page-link">5</a></li>
-                <li class="page-item"><a href="#" class="page-link">6</a></li>
-                <li class="page-item"><a href="#" class="page-link">7</a></li>
-                <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-                <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
+            <ul id="pagination" class="pagination pagination-sm">
+                
             </ul>
         </div>
 
         </div>
     </div>
-
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="js/bootstrap/js/bootstrap.min.js"></script>
     <script>
         // 设置左侧菜单
         $('#release_btn').click(function(){
             window.parent.setMenu(1,1);
-        })
+        });
     </script>
 <script src="./js/utile/article.js"></script>
 <script src="./js/utile/config.js"></script>
 <script src="./js/template-web.js"></script>
+<!-- 实现分页 -->
+<script src="./js/jquery.twbsPagination.js"></script>
 <script type="text/html" id="temp">
 {{each data item}}
 <tr>
@@ -156,6 +148,21 @@ article.del(id,function(res){
             }
         })
 })
+// 分页
+$('#pagination').twbsPagination(
+            {
+                totalPages: 43,
+                visiblePages: 7,
+                first: '首页',
+                prev: '上一页',
+                next: '下一页',
+                last: '尾页',
+                onPageClick: function (event, page) {
+                    console.log(event,page);
+                    
+                }
+            }
+        );
 </script>
 </body>
 
