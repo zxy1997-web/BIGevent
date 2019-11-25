@@ -1,6 +1,9 @@
 var article ={
- show : function (callback){
-     $.get(APIURLS.list_search,function(res){
+ show : function (curPage,callback){
+     $.get(APIURLS.list_search,
+        {
+            page:curPage,
+        },function(res){
          callback(res)
      })
  },
