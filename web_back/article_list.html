@@ -23,11 +23,11 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <option>所有分类</option>
+                            <!-- <option>所有分类</option>
                             <option>未分类</option>
                             <option>奇趣事</option>
                             <option>会生活</option>
-                            <option>爱旅行</option>
+                            <option>爱旅行</option> -->
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
                             <option>所有状态</option>
@@ -93,6 +93,7 @@
         });
     </script>
 <script src="./js/utile/article.js"></script>
+<script src="./js/utile/category.js"></script>
 <script src="./js/utile/config.js"></script>
 <script src="./js/template-web.js"></script>
 <!-- 实现分页 -->
@@ -117,18 +118,31 @@
     </tr>
 {{/each}}
 </script>
+<script type="text/html" id="call">
+{{each data item}}
+<option value="{{item.id}}">{{item.name}}</option>
+{{/each}}
+</script>
 <script>
 var curPage = "";
-
+category.show(function(res){
+            console.log(res);
+            // 模板引擎，渲染数据
+            var htmlStr = template('call',res);
+            console.log(htmlStr);
+            $('#selCategory').html(htmlStr)
+            
+            
+        })
 function getList(){
     article.show(curPage,function(res){
     // 取回数据
     // 模板引擎，渲染数据
     console.log(res)
     var htmlStr = template('temp',res)
-    console.log(res.totalPage)
-$('#articleList').html(htmlStr);
+    
 
+$('#articleList').html(htmlStr);
 $('#pagination').twbsPagination(
     
                 {
