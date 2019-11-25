@@ -23,18 +23,14 @@
                 <div class="col-xs-6">
                     <form class="form-inline">
                         <select id="selCategory" name="" class="form-control input-sm">
-                            <!-- <option>所有分类</option>
-                            <option>未分类</option>
-                            <option>奇趣事</option>
-                            <option>会生活</option>
-                            <option>爱旅行</option> -->
+            
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
-                        <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
+                        <button type="button" id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
                 </div>
                 <div class="col-xs-6">
@@ -54,33 +50,15 @@
                     </tr>
                 </thead>
                 <tbody id="articleList">
-<!-- 
-
-
-                    <tr>
-                        
-                        <td>王积千造统最头</td>
-                        <td>杰克</td>
-                        <td>奇趣事</td>
-                        <td class="text-center">2017-06-08 07:08:46</td>
-
-
-                        <td class="text-center">已发布</td>
-
-
-                        <td class="text-center">
-                            <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 1005 );" class="btn btn-danger btn-xs">删除</a>
-                        </td>
-                    </tr> -->
+                    
                 </tbody>
             </table>
 
             <div class="row text-center">
-            <ul id="pagination" class="pagination pagination-sm">
-                
-            </ul>
-        </div>
+                <ul id="pagination" class="pagination pagination-sm">
+
+                </ul>
+            </div>
 
         </div>
     </div>
@@ -88,17 +66,17 @@
     <script src="js/bootstrap/js/bootstrap.min.js"></script>
     <script>
         // 设置左侧菜单
-        $('#release_btn').click(function(){
-            window.parent.setMenu(1,1);
+        $('#release_btn').click(function () {
+            window.parent.setMenu(1, 1);
         });
     </script>
-<script src="./js/utile/article.js"></script>
-<script src="./js/utile/category.js"></script>
-<script src="./js/utile/config.js"></script>
-<script src="./js/template-web.js"></script>
-<!-- 实现分页 -->
-<script src="./js/jquery.twbsPagination.js"></script>
-<script type="text/html" id="temp">
+    <script src="./js/utile/article.js"></script>
+    <script src="./js/utile/category.js"></script>
+    <script src="./js/utile/config.js"></script>
+    <script src="./js/template-web.js"></script>
+    <!-- 实现分页 -->
+    <script src="./js/jquery.twbsPagination.js"></script>
+    <script type="text/html" id="temp">
 {{each data item}}
 <tr>
                         
@@ -108,7 +86,7 @@
         <td class="text-center">{{item.date}}</td>
 
 
-        <td class="text-center">{{item.status}}</td>
+        <td class="text-center">{{item.state}}</td>
 
 
         <td class="text-center">
@@ -118,78 +96,107 @@
     </tr>
 {{/each}}
 </script>
-<script type="text/html" id="call">
-{{each data item}}
+    <script type="text/html" id="call">
+    <option value="">所有分类</option>    
+    {{each data item}}
+ 
 <option value="{{item.id}}">{{item.name}}</option>
 {{/each}}
 </script>
-<script>
-var curPage = "";
-category.show(function(res){
+    <script>
+        category.show(function (res) {
             console.log(res);
             // 模板引擎，渲染数据
-            var htmlStr = template('call',res);
+            var htmlStr = template('call', res);
             console.log(htmlStr);
             $('#selCategory').html(htmlStr)
-            
-            
-        })
-function getList(){
-    article.show(curPage,function(res){
-    // 取回数据
-    // 模板引擎，渲染数据
-    console.log(res)
-    var htmlStr = template('temp',res)
-    
 
-$('#articleList').html(htmlStr);
-$('#pagination').twbsPagination(
-    
-                {
-                    
-                totalPages: res.totalPage,
-                visiblePages: 7,
-                first: '首页',
-                prev: '上一页',
-                next: '下一页',
-                last: '尾页',
-                onPageClick: function (event, page) {
-                    console.log(event,page);
-                    curPage = page;
-                    getList();
+
+        })
+    </script>
+    <script>
+        var curPage = "";
+        var type = ""; // 表示文章的类型
+        var state = ""; // 表示文章的状态
+        var curTotalPage = "";
+        getList();
+        function getList(){
+            article.show(curPage, type, state, function(res){
+                // 取回数据
+                // 模板引擎，渲染数据
+                console.log(res)
+                if (res.code === 200) {
+                    var htmlStr = template('temp', res)
+                    $('#articleList').html(htmlStr);
                 }
-            }
-        );
-        
-        })
-}
-getList();
-//删除
-// $（容器）.on（事件名，委托人，回调）
-$('#articleList').on('click','.del',function(){
-    if(window.confirm('确定要删除吗？') === false){
+                if (curTotalPage != res.totalPage) {
+                    console.log('前后两次查询结果得到的总页数不相同')
+                    console.log(curTotalPage, res.totalPage)
+                    // 由于插件对总页数的变化不敏感，所以如果总页数不同，则要
+                    // 先销毁，再创建
+                    // 参考：http://josecebe.github.io/twbs-pagination/
+                    $('#pagination').twbsPagination('destroy');
+                    curTotalPage = res.totalPage
+                }
+                $('#pagination').twbsPagination(
 
-return;
-}
-var id = $ (this).attr('data-id');
-article.del(id,function(res){
-    if(res.code === 200){
-                // 删除成功
-                // 1、直接在页面上删除dom（有可能导致数据不同步）（不适用）
-                // 2、重新获取数据
-                getList();
-                // 分页
-                
-            }
-            else{
-                alert(res.msg);
-            }
-            
-           
-        })
-})
+                    {
 
-</script>
+                        totalPages: res.totalPage,
+                        visiblePages: 7,
+                        first: '首页',
+                        prev: '上一页',
+                        next: '下一页',
+                        last: '尾页',
+                        onPageClick: function (event, page) {
+                            console.log(event, page);
+                            curPage = page;
+                            getList();
+                        }
+                    }
+                );
+
+            })
+        }
+
+
+        //筛选
+        $('#btnSearch').click(function(){
+            // 1. 获取当前的筛选条件。保存到全局变量中
+            // 如何获取下拉列表中当前选中的值
+            type = $('#selCategory').val()
+            state = $('#selStatus').val()
+            // console.log(type,state)
+            // 筛选条件变化，直接固定选第一页
+            curPage = 1;
+            // 2. 重发请求
+            getList();
+        })
+        //删除
+        // $（容器）.on（事件名，委托人，回调）
+        $('#articleList').on('click', '.del', function () {
+            if (window.confirm('确定要删除吗？') === false) {
+
+                return;
+            }
+            var id = $(this).attr('data-id');
+            article.del(id, function (res) {
+                if (res.code === 200) {
+                    // 删除成功
+                    // 1、直接在页面上删除dom（有可能导致数据不同步）（不适用）
+                    // 2、重新获取数据
+                    getList();
+                    // 分页
+
+                }
+                else {
+                    alert(res.msg);
+                }
+
+
+            })
+        })
+    </script>
 </body>
 
 </html>
